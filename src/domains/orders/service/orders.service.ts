@@ -1,5 +1,8 @@
+import axios from "axios";
 import { CreateOrderDTO, GetOrderDTO } from "../dto";
 import { OrdersRepository } from "../repository";
+
+const controlTowerURL = process.env.CONTROL_TOWER_URL + '/api/orders';
 
 export class OrdersService {
   constructor(private readonly repository: OrdersRepository) {}
@@ -9,7 +12,10 @@ export class OrdersService {
   }
 
   async createOrder(data: CreateOrderDTO): Promise<void> {
-    await this.repository.createOrder(data);
+    const order = await this.repository.createOrder(data);
+    await axios.post(controlTowerURL, {
+      orderId: order.id
+    });
   }
 
 }

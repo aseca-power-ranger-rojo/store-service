@@ -26,8 +26,8 @@ export class OrdersRepository {
         return orders.map(order => new GetOrderDTO(order));
     }
 
-    async createOrder(data: CreateOrderDTO): Promise<void> {
-        await this.db.order.create({
+    async createOrder(data: CreateOrderDTO): Promise<{id: string}> {
+        return await this.db.order.create({
             data: {
                 products: {
                     create: data.products.map(product => ({
@@ -40,6 +40,9 @@ export class OrdersRepository {
                     }))
                 },
                 totalPrice: data.totalPrice
+            },
+            select: {
+                id: true
             }
         })
     }
