@@ -9,13 +9,21 @@ export const ordersController = Router();
 
 const service: OrdersService = new OrdersService(new OrdersRepository(db))
 
-ordersController.get('/', async(req: Request, res: Response) => {
-  const orders: GetOrderDTO[] = await service.getOrders();
-  return res.status(httpStatus.OK).json(orders);
+ordersController.get('/', async(req: Request, res: Response, next) => {
+  try {
+    const orders: GetOrderDTO[] = await service.getOrders();
+    return res.status(httpStatus.OK).json(orders);
+  } catch (error) {
+    next(error);
+  }
 });
   
-ordersController.post('/', BodyValidation(CreateOrderDTO),  async(req: Request, res: Response) => {
-  const data = req.body;
-  await service.createOrder(data);
-  return res.status(httpStatus.CREATED).json();
+ordersController.post('/', BodyValidation(CreateOrderDTO),  async(req: Request, res: Response, next) => {
+  try {
+    const data = req.body;
+    await service.createOrder(data);
+    return res.status(httpStatus.CREATED).json();
+  } catch (error) {
+    next(error);
+  }
 });
